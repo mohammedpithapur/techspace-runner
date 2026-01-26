@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/go-rocket/static/css/main.c1194ad1.css",
-    "main.js": "/go-rocket/static/js/main.badb8bdf.js",
-    "static/js/453.a9287f9a.chunk.js": "/go-rocket/static/js/453.a9287f9a.chunk.js",
-    "index.html": "/go-rocket/index.html",
-    "main.c1194ad1.css.map": "/go-rocket/static/css/main.c1194ad1.css.map",
-    "main.badb8bdf.js.map": "/go-rocket/static/js/main.badb8bdf.js.map",
-    "453.a9287f9a.chunk.js.map": "/go-rocket/static/js/453.a9287f9a.chunk.js.map"
+    "main.css": "/techspace-runner/static/css/main.c1194ad1.css",
+    "main.js": "/techspace-runner/static/js/main.edf4004b.js",
+    "static/js/453.a9287f9a.chunk.js": "/techspace-runner/static/js/453.a9287f9a.chunk.js",
+    "index.html": "/techspace-runner/index.html",
+    "main.c1194ad1.css.map": "/techspace-runner/static/css/main.c1194ad1.css.map",
+    "main.edf4004b.js.map": "/techspace-runner/static/js/main.edf4004b.js.map",
+    "453.a9287f9a.chunk.js.map": "/techspace-runner/static/js/453.a9287f9a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c1194ad1.css",
-    "static/js/main.badb8bdf.js"
+    "static/js/main.edf4004b.js"
   ]
 }
