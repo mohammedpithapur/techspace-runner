@@ -31,6 +31,7 @@ const SpaceRunner = () => {
   const [firebaseInitialized, setFirebaseInitialized] = useState(false);
   const [error, setError] = useState('');
   const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(true);
   
   const firebaseApp = useRef(null);
   const database = useRef(null);
@@ -322,8 +323,8 @@ const SpaceRunner = () => {
       spawnSingle('floating', 0);
       spawnSingle('floating', gap);
     } else if (roll < 0.45) {
-      // Triple ground cluster
-      const gap = OBSTACLE_SIZE * 1.1;
+      // Triple ground cluster - tighter spacing to require held jump
+      const gap = OBSTACLE_SIZE * 0.85;
       spawnSingle('ground', 0);
       spawnSingle('ground', gap);
       spawnSingle('ground', gap * 2);
@@ -414,6 +415,10 @@ const SpaceRunner = () => {
     
     gameActiveRef.current = true;
     lastFrameTimeRef.current = performance.now();
+    
+    // Show instructions and hide after 3 seconds
+    setShowInstructions(true);
+    setTimeout(() => setShowInstructions(false), 3000);
     
     forceUpdate({});
     animationFrameRef.current = requestAnimationFrame(gameLoop);
@@ -664,21 +669,23 @@ const SpaceRunner = () => {
           </div>
         ))}
 
-        <div 
-          className="absolute left-1/2 transform -translate-x-1/2 text-center" 
-          style={{ 
-            top: '5rem', 
-            fontSize: '0.9rem', 
-            zIndex: 50,
-            color: '#ffffff',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '0.5rem'
-          }}
-        >
-          <p>Tap & Hold: Jump Higher | Quick Tap: Short Hop</p>
-        </div>
+        {showInstructions && (
+          <div 
+            className="absolute left-1/2 transform -translate-x-1/2 text-center" 
+            style={{ 
+              top: '5rem', 
+              fontSize: '0.9rem', 
+              zIndex: 50,
+              color: '#ffffff',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+              backgroundColor: 'rgba(0,0,0,0.4)',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '0.5rem'
+            }}
+          >
+            <p>Tap & Hold: Jump Higher | Quick Tap: Short Hop</p>
+          </div>
+        )}
       </div>
     );
   }
