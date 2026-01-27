@@ -60,7 +60,7 @@ const SpaceRunner = () => {
     const height = window.innerHeight;
     const playerSize = Math.min(width * 0.15, 80);
     const obstacleSize = Math.min(width * 0.15, 80);
-    const groundY = height * 0.70; // Lowered for better visibility
+    const groundY = height * 0.60; // Raised higher on screen
     return { width, height, playerSize, obstacleSize, groundY };
   };
   
@@ -300,7 +300,7 @@ const SpaceRunner = () => {
     const nextDelay = Math.max(700, baseDelay + Math.random() * variance);
 
     const spawnX = window.innerWidth * 1.1;
-    const floatingHeight = GROUND_Y - (window.innerHeight * 0.15); // Lowered from 0.25 to 0.15
+    const floatingHeight = GROUND_Y - (window.innerHeight * 0.18); // Adjusted for new ground height
 
     const spawnSingle = (type, offset = 0) => {
       obstaclesRef.current.push({
