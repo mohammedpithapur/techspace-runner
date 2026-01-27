@@ -21,6 +21,8 @@ const FIREBASE_CONFIG = {
 };
 
 const SpaceRunner = () => {
+  const isMobile = typeof navigator !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent);
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const [screen, setScreen] = useState('landing');
   const [playerName, setPlayerName] = useState('');
   const [playerContact, setPlayerContact] = useState('');
@@ -77,8 +79,6 @@ const SpaceRunner = () => {
   const PLAYER_WIDTH = dims.playerSize;
   const PLAYER_HEIGHT = dims.playerSize;
   const OBSTACLE_SIZE = dims.obstacleSize;
-  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
   const vibrate = (pattern) => {
     if (!isMobile || !('vibrate' in navigator)) return;
