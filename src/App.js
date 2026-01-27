@@ -664,7 +664,19 @@ const SpaceRunner = () => {
           </div>
         ))}
 
-        <div className="absolute left-1/2 transform -translate-x-1/2 text-center text-gray-800" style={{ bottom: '4rem', fontSize: '1rem', zIndex: 50,color: '#ffffff' }}>
+        <div 
+          className="absolute left-1/2 transform -translate-x-1/2 text-center" 
+          style={{ 
+            top: '5rem', 
+            fontSize: '0.9rem', 
+            zIndex: 50,
+            color: '#ffffff',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '0.5rem'
+          }}
+        >
           <p>Tap & Hold: Jump Higher | Quick Tap: Short Hop</p>
         </div>
       </div>
