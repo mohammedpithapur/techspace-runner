@@ -90,6 +90,15 @@ const SpaceRunner = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [GROUND_Y]);
 
+  // Load cached player data from localStorage
+  useEffect(() => {
+    const cachedName = localStorage.getItem('playerName');
+    const cachedContact = localStorage.getItem('playerContact');
+    
+    if (cachedName) setPlayerName(cachedName);
+    if (cachedContact) setPlayerContact(cachedContact);
+  }, []);
+
   // Initialize Firebase
   useEffect(() => {
     const initFirebase = async () => {
@@ -417,6 +426,9 @@ const SpaceRunner = () => {
 
   const handleRegister = () => {
     if (playerName.trim() && playerContact.trim()) {
+      // Save to localStorage
+      localStorage.setItem('playerName', playerName);
+      localStorage.setItem('playerContact', playerContact);
       setTimeout(startGame, 100);
     }
   };
@@ -543,6 +555,18 @@ const SpaceRunner = () => {
               className="w-full bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-bold py-4 rounded-xl"
             >
               Start Playing
+            </button>
+            
+            <button
+              onClick={() => {
+                localStorage.removeItem('playerName');
+                localStorage.removeItem('playerContact');
+                setPlayerName('');
+                setPlayerContact('');
+              }}
+              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-xl border-2 border-gray-300"
+            >
+              Clear Saved Data
             </button>
           </div>
         </div>
