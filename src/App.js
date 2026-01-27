@@ -75,6 +75,13 @@ const SpaceRunner = () => {
   const PLAYER_WIDTH = dims.playerSize;
   const PLAYER_HEIGHT = dims.playerSize;
   const OBSTACLE_SIZE = dims.obstacleSize;
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+  const vibrate = (pattern) => {
+    if (!isMobile || !('vibrate' in navigator)) return;
+    navigator.vibrate(pattern);
+  };
   
   // Initialize player Y position if not set
   useEffect(() => {
@@ -283,6 +290,7 @@ const SpaceRunner = () => {
       isJumpingRef.current = true;
       jumpStartTimeRef.current = performance.now();
       jumpCountRef.current++; // Track jumps
+      vibrate(12);
     }
   };
 
@@ -356,6 +364,7 @@ const SpaceRunner = () => {
     
     const score = Math.floor(scoreRef.current);
     setFinalScore(score);
+    vibrate([25, 40, 25]);
     
     // Save to Firebase
     if (database.current) {
@@ -595,7 +604,7 @@ const SpaceRunner = () => {
         }}
         onMouseDown={handleTouchStart}
         onMouseUp={handleTouchEnd}
-        style={{ touchAction: 'none', position: 'relative' }}
+        style={{ touchAction: 'none', position: 'relative', overscrollBehavior: 'contain' }}
       >
         <div
           className="absolute inset-0"
@@ -605,7 +614,7 @@ const SpaceRunner = () => {
           }}
         ></div>
 
-        {!showInstructions && (
+        {!showInstructions && !prefersReducedMotion && (
           <div 
             className="absolute"
             style={{
