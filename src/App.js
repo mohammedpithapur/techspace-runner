@@ -605,6 +605,38 @@ const SpaceRunner = () => {
           }}
         ></div>
 
+        {!showInstructions && (
+          <div 
+            className="absolute"
+            style={{
+              top: '15%',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '120px',
+              height: '120px',
+              zIndex: 3,
+              animation: 'float 6s ease-in-out infinite',
+              opacity: 0.3
+            }}
+          >
+            <img 
+              src={`${process.env.PUBLIC_URL}/logo192.png`} 
+              alt="Logo" 
+              className="w-full h-full object-contain"
+              style={{
+                filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))'
+              }}
+            />
+          </div>
+        )}
+
+        <style>{`
+          @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            50% { transform: translateX(-50%) translateY(-20px); }
+          }
+        `}</style>
+
         <div className="absolute text-gray-900 font-bold" style={{ top: '5rem', right: '2rem', fontSize: '2rem', zIndex: 50, color: '#ffffff' }}>
           {Math.floor(scoreRef.current)}
         </div>
