@@ -62,11 +62,13 @@ const SpaceRunner = () => {
   const getGameDimensions = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const sizeFactor = isMobile ? 0.10 : 0.15; // Further zoom-out on mobile
-    const maxSize = isMobile ? 60 : 80;
+    // Like Chrome Dino game - smaller, cleaner proportions
+    const sizeFactor = isMobile ? 0.08 : 0.12;
+    const maxSize = isMobile ? 50 : 70;
     const playerSize = Math.min(width * sizeFactor, maxSize);
     const obstacleSize = Math.min(width * sizeFactor, maxSize);
-    const groundY = height * (isMobile ? 0.70 : 0.60); // More runway on mobile
+    // Ground position similar to T-Rex game - lower on screen
+    const groundY = height * (isMobile ? 0.75 : 0.65);
     return { width, height, playerSize, obstacleSize, groundY };
   };
   
