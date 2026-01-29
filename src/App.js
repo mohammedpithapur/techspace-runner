@@ -34,6 +34,7 @@ const SpaceRunner = () => {
   const [error, setError] = useState('');
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
+  const [feedback, setFeedback] = useState('');
   
   const firebaseApp = useRef(null);
   const database = useRef(null);
@@ -373,6 +374,7 @@ const SpaceRunner = () => {
     const score = Math.floor(scoreRef.current);
     setFinalScore(score);
     vibrate([25, 40, 25]);
+    setFeedback('');
     
     // Save to Firebase
     if (database.current) {
@@ -415,6 +417,44 @@ const SpaceRunner = () => {
     }
     
     setScreen('gameover');
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!feedback.trim()) {
+      setError('Please enter your feedback before submitting.');
+      return;
+    }
+
+    setLoading(true);
+    
+    // Save feedback to Firebase
+    if (database.current) {
+      try {
+        const feedbackRef = database.current.ref('feedback');
+        await feedbackRef.push({
+          playerName: playerName,
+          playerContact: playerContact,
+          score: finalScore,
+          feedback: feedback,
+          timestamp: Date.now()
+        });
+        
+        setError('');
+        setFeedback('');
+        
+        // Show success message and navigate back
+        setTimeout(() => {
+          setPlayerName('');
+          setPlayerContact('');
+          setScreen('landing');
+          setLoading(false);
+        }, 1000);
+      } catch (error) {
+        console.error('Failed to save feedback:', error);
+        setError('Failed to save feedback. Please try again.');
+        setLoading(false);
+      }
+    }
   };
 
   const startGame = () => {
@@ -766,8 +806,30 @@ const SpaceRunner = () => {
               ))}
             </div>
           )}
+
+          <div className="bg-gray-50 rounded-xl p-4 border-2 border-gray-300">
+            <label className="block text-gray-700 font-semibold mb-3">
+              Share Your Feedback
+            </label>
+            <textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              placeholder="Tell us how you liked the game, what could be improved, or any bugs you found..."
+              className="w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 resize-none"
+              rows="4"
+            />
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          </div>
           
           <div className="space-y-3">
+            <button
+              onClick={handleSubmitFeedback}
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-4 rounded-xl"
+            >
+              {loading ? 'Submitting...' : 'Submit Feedback'}
+            </button>
+
             <button
               onClick={startGame}
               className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 rounded-xl"
@@ -779,6 +841,7 @@ const SpaceRunner = () => {
               onClick={() => {
                 setPlayerName('');
                 setPlayerContact('');
+                setFeedback('');
                 setScreen('landing');
               }}
               className="w-full bg-gray-200 hover:bg-gray-300 border-2 border-gray-300 text-gray-700 font-semibold py-3 rounded-xl"
