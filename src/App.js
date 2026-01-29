@@ -62,13 +62,13 @@ const SpaceRunner = () => {
   const getGameDimensions = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    // Like Chrome Dino game - smaller, cleaner proportions
-    const sizeFactor = isMobile ? 0.08 : 0.12;
-    const maxSize = isMobile ? 50 : 70;
+    // Match Chrome Dino game proportions - larger visible player
+    const sizeFactor = isMobile ? 0.14 : 0.12;
+    const maxSize = isMobile ? 90 : 70;
     const playerSize = Math.min(width * sizeFactor, maxSize);
     const obstacleSize = Math.min(width * sizeFactor, maxSize);
-    // Ground position similar to T-Rex game - lower on screen
-    const groundY = height * (isMobile ? 0.75 : 0.65);
+    // Ground position like T-Rex game - balanced on screen
+    const groundY = height * (isMobile ? 0.68 : 0.65);
     return { width, height, playerSize, obstacleSize, groundY };
   };
   
