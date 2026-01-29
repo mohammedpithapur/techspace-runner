@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/techspace-runner/static/css/main.4ca48121.css",
-    "main.js": "/techspace-runner/static/js/main.1d38152b.js",
+    "main.css": "/techspace-runner/static/css/main.00e9cb37.css",
+    "main.js": "/techspace-runner/static/js/main.bc36d558.js",
     "static/js/453.a9287f9a.chunk.js": "/techspace-runner/static/js/453.a9287f9a.chunk.js",
     "index.html": "/techspace-runner/index.html",
-    "main.4ca48121.css.map": "/techspace-runner/static/css/main.4ca48121.css.map",
-    "main.1d38152b.js.map": "/techspace-runner/static/js/main.1d38152b.js.map",
+    "main.00e9cb37.css.map": "/techspace-runner/static/css/main.00e9cb37.css.map",
+    "main.bc36d558.js.map": "/techspace-runner/static/js/main.bc36d558.js.map",
     "453.a9287f9a.chunk.js.map": "/techspace-runner/static/js/453.a9287f9a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4ca48121.css",
-    "static/js/main.1d38152b.js"
+    "static/css/main.00e9cb37.css",
+    "static/js/main.bc36d558.js"
   ]
 }
