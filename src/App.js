@@ -75,7 +75,7 @@ const SpaceRunner = () => {
   const JUMP_VELOCITY = -950;
   const MIN_JUMP_DURATION = 0.15;
   const MAX_JUMP_HOLD = 0.35;
-  const MAX_WORLD_SPEED = isMobile ? 4500 : 6200;
+  const MAX_WORLD_SPEED = isMobile ? 3500 : 6200;
   const PLAYER_WIDTH = dims.playerSize;
   const PLAYER_HEIGHT = dims.playerSize;
   const OBSTACLE_SIZE = dims.obstacleSize;
@@ -223,12 +223,14 @@ const SpaceRunner = () => {
       const obsTop = obs.y;
       const obsBottom = obs.y + OBSTACLE_SIZE;
       
-      // Strict collision detection - minimal tolerance
+      // Chrome Dino-style forgiving hitboxes - 15% reduction on all sides
+      const hitboxPadding = OBSTACLE_SIZE * 0.15;
+      
       if (
-        playerRight > obsLeft &&
-        playerLeft < obsRight &&
-        playerBottom > obsTop &&
-        playerTop < obsBottom
+        playerRight - hitboxPadding > obsLeft + hitboxPadding &&
+        playerLeft + hitboxPadding < obsRight - hitboxPadding &&
+        playerBottom - hitboxPadding > obsTop + hitboxPadding &&
+        playerTop + hitboxPadding < obsBottom - hitboxPadding
       ) {
         return true;
       }
@@ -270,10 +272,13 @@ const SpaceRunner = () => {
       .map(obs => ({ ...obs, x: obs.x - speed }))
       .filter(obs => obs.x > -OBSTACLE_SIZE - 50); // Better off-screen check
     
-    const speedMultiplier = Math.floor((worldSpeedRef.current - 600) / 100);
-    scoreRef.current += (1 + speedMultiplier) * (deltaTime / 100);
+    // Chrome Dino-style scoring and speed increase
+    const baseSpeed = isMobile ? 520 : 600;
+    const speedMultiplier = Math.floor((worldSpeedRef.current - baseSpeed) / 150);
+    scoreRef.current += (1 + speedMultiplier * 0.5) * (deltaTime / 100);
+    // More gradual speed increase like Chrome Dino
     worldSpeedRef.current = Math.min(
-      worldSpeedRef.current * (isMobile ? 1.00004 : 1.0001),
+      worldSpeedRef.current * (isMobile ? 1.00002 : 1.00005),
       MAX_WORLD_SPEED
     );
     
@@ -305,11 +310,11 @@ const SpaceRunner = () => {
 
   const spawnObstacle = () => {
     if (!gameActiveRef.current) return;
-    // Scale spawn rate with speed/score (caps at 700ms base)
-    const speedFactor = Math.min(1.6, worldSpeedRef.current / 600);
-    const baseDelay = 1400 / speedFactor;
-    const variance = 900 / speedFactor;
-    const nextDelay = Math.max(700, baseDelay + Math.random() * variance);
+    // Chrome Dino-style predictable spawning with gradual difficulty
+    const speedFactor = Math.min(1.5, worldSpeedRef.current / (isMobile ? 520 : 600));
+    const baseDelay = 1600 / speedFactor;
+    const variance = 600 / speedFactor;
+    const nextDelay = Math.max(isMobile ? 900 : 800, baseDelay + Math.random() * variance);
 
     const spawnX = window.innerWidth * 1.25; // Spawn farther so players see ahead
     const floatingHeight = GROUND_Y - (window.innerHeight * 0.18); // Adjusted for new ground height
@@ -323,33 +328,31 @@ const SpaceRunner = () => {
       });
     };
 
-    // Random pattern selection (bias toward ground obstacles)
+    // Chrome Dino-style obstacle patterns - simpler and more predictable
     const roll = Math.random();
-    if (roll < 0.22) {
-      // Double ground
-      const gap = OBSTACLE_SIZE * 1.2;
+    if (roll < 0.25) {
+      // Double ground - wider spacing
+      const gap = OBSTACLE_SIZE * 1.5;
       spawnSingle('ground', 0);
       spawnSingle('ground', gap);
-    } else if (roll < 0.28) {
-      // Double floating (reduced chance)
-      const gap = OBSTACLE_SIZE * 1.2;
+    } else if (roll < 0.35) {
+      // Double floating
+      const gap = OBSTACLE_SIZE * 1.5;
       spawnSingle('floating', 0);
       spawnSingle('floating', gap);
-    } else if (roll < 0.45) {
-      // Triple ground cluster - tighter spacing to require held jump
-      const gap = OBSTACLE_SIZE * 0.85;
-      spawnSingle('ground', 0);
-      spawnSingle('ground', gap);
-      spawnSingle('ground', gap * 2);
-    } else if (roll < 0.50) {
-      // Triple floating cluster (rare)
-      const gap = OBSTACLE_SIZE * 1.05;
-      spawnSingle('floating', 0);
-      spawnSingle('floating', gap);
-      spawnSingle('floating', gap * 2);
+    } else if (roll < 0.42) {
+      // Triple ground - only at higher speeds
+      if (worldSpeedRef.current > (isMobile ? 700 : 1000)) {
+        const gap = OBSTACLE_SIZE * 1.1;
+        spawnSingle('ground', 0);
+        spawnSingle('ground', gap);
+        spawnSingle('ground', gap * 2);
+      } else {
+        spawnSingle('ground', 0);
+      }
     } else {
-      // Regular single obstacle with ground bias
-      const type = Math.random() < 0.7 ? 'ground' : 'floating';
+      // Single obstacle - most common like Chrome Dino
+      const type = Math.random() < 0.65 ? 'ground' : 'floating';
       spawnSingle(type, 0);
     }
     
@@ -601,10 +604,12 @@ const SpaceRunner = () => {
         className="h-screen w-screen bg-blue-50 overflow-hidden relative select-none"
         onTouchStart={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           handleTouchStart();
         }}
         onTouchEnd={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           handleTouchEnd();
         }}
         onMouseDown={handleTouchStart}
