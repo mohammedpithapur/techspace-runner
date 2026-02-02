@@ -367,22 +367,22 @@ const SpaceRunner = () => {
     const roll = Math.random();
     const avgObstacleSize = (FLOATING_OBSTACLE_SIZE + LANDED_OBSTACLE_SIZE) / 2;
     
-    if (roll < 0.50) {
-      // Single land meteor - 50%
+    if (roll < 0.40) {
+      // Single land meteor - 40%
       spawnSingle('ground', 0);
-    } else if (roll < 0.70) {
+    } else if (roll < 0.60) {
       // Double land meteor - 20%
       const gap = avgObstacleSize * 1.5;
       spawnSingle('ground', 0);
       spawnSingle('ground', gap);
-    } else if (roll < 0.90) {
-      // Triple land meteor - 20%
+    } else if (roll < 0.75) {
+      // Triple land meteor - 15%
       const gap = avgObstacleSize * 1.1;
       spawnSingle('ground', 0);
       spawnSingle('ground', gap);
       spawnSingle('ground', gap * 2);
     } else {
-      // Single floating meteor - 10%
+      // Single floating meteor - 25%
       spawnSingle('floating', 0);
     }
     
