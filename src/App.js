@@ -514,7 +514,7 @@ const SpaceRunner = () => {
     return (
       <div className="min-h-screen bg-white text-gray-800 flex flex-col items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-6">
-          <h1 className="text-5xl font-bold text-gray-900">TechSpace Runner</h1>
+          <h1 className="text-5xl font-bold text-gray-900">Go Rocket</h1>
           <p className="text-gray-600">HTS'26 Web Game Challenge</p>
           
           {error && (
