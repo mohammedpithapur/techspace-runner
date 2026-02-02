@@ -9,10 +9,23 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Barlow';
+  src: url('./Barlow.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   font-family: 'CYN', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-transform: uppercase;
+}
+
+.leaderboard-text {
+  font-family: 'Barlow', sans-serif;
+  text-transform: uppercase;
 }

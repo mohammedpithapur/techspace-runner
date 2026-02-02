@@ -543,14 +543,14 @@ const SpaceRunner = () => {
           )}
           
           {leaderboard.length > 0 && (
-            <div className="bg-gray-100 rounded-xl p-4 border-2 border-gray-300">
+            <div className="bg-gray-100 rounded-xl p-4 border-2 border-gray-300 leaderboard-text">
               <h3 className="text-gray-700 font-semibold mb-3 flex items-center justify-center gap-2">
                 <Trophy className="w-5 h-5" />
                 Top 3 Scores
               </h3>
               {leaderboard.slice(0, 3).map((entry, i) => (
                 <div key={entry.id || i} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
-                  <span className="text-gray-600">#{i + 1} {entry.name}</span>
+                  <span className="text-gray-600 uppercase">#{i + 1} {entry.name}</span>
                   <span className="text-gray-900 font-bold">{entry.score}</span>
                 </div>
               ))}
@@ -920,14 +920,14 @@ const SpaceRunner = () => {
               </div>
 
               {leaderboard.length > 0 && (
-                <div className="bg-black bg-opacity-40 rounded-xl p-4 shadow-2xl">
+                <div className="bg-black bg-opacity-40 rounded-xl p-4 shadow-2xl leaderboard-text">
                   <h3 className="text-white font-semibold mb-3 flex items-center justify-center gap-2">
                     <Trophy className="w-5 h-5" />
                     Top Scores
                   </h3>
                   {leaderboard.slice(0, 3).map((entry, i) => (
                     <div key={entry.id || i} className="flex justify-between items-center py-2 border-b border-gray-400 border-opacity-30 last:border-0">
-                      <span className="text-gray-200">#{i + 1} {entry.name}</span>
+                      <span className="text-gray-200 uppercase">#{i + 1} {entry.name}</span>
                       <span className="text-white font-bold">{entry.score}</span>
                     </div>
                   ))}
@@ -960,7 +960,7 @@ const SpaceRunner = () => {
             <h2 className="text-3xl font-bold text-gray-900">Leaderboard</h2>
           </div>
           
-          <div className="bg-gray-100 rounded-xl p-6 border-2 border-gray-300">
+          <div className="bg-gray-100 rounded-xl p-6 border-2 border-gray-300 leaderboard-text">
             {loading ? (
               <p className="text-center text-gray-600">Loading...</p>
             ) : leaderboard.length === 0 ? (
@@ -986,7 +986,7 @@ const SpaceRunner = () => {
                       }`}>
                         #{i + 1}
                       </span>
-                      <span className="text-gray-900 font-medium">{entry.name}</span>
+                      <span className="text-gray-900 font-medium uppercase">{entry.name}</span>
                     </div>
                     <span className="text-gray-900 font-bold text-lg">{entry.score}</span>
                   </div>
