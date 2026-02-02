@@ -10,8 +10,8 @@
 }
 
 @font-face {
-  font-family: 'Barlow';
-  src: url('./Barlow.ttf') format('truetype');
+  font-family: 'Guardians';
+  src: url('./Guardians.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -25,7 +25,6 @@ body {
   text-transform: uppercase;
 }
 
-.leaderboard-text {
-  font-family: 'Barlow', sans-serif;
-  text-transform: uppercase;
+.guardians-font {
+  font-family: 'Guardians', sans-serif;
 }

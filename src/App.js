@@ -514,7 +514,7 @@ const SpaceRunner = () => {
     return (
       <div className="min-h-screen bg-white text-gray-800 flex flex-col items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-6">
-          <h1 className="text-5xl font-bold text-gray-900">Go Rocket</h1>
+          <h1 className="text-5xl font-bold text-gray-900 guardians-font">Go Rocket</h1>
           <p className="text-gray-600">HTS'26 Web Game Challenge</p>
           
           {error && (
@@ -543,7 +543,7 @@ const SpaceRunner = () => {
           )}
           
           {leaderboard.length > 0 && (
-            <div className="bg-gray-100 rounded-xl p-4 border-2 border-gray-300 leaderboard-text">
+            <div className="bg-gray-100 rounded-xl p-4 border-2 border-gray-300">
               <h3 className="text-gray-700 font-semibold mb-3 flex items-center justify-center gap-2">
                 <Trophy className="w-5 h-5" />
                 Top 3 Scores
@@ -920,7 +920,7 @@ const SpaceRunner = () => {
               </div>
 
               {leaderboard.length > 0 && (
-                <div className="bg-black bg-opacity-40 rounded-xl p-4 shadow-2xl leaderboard-text">
+                <div className="bg-black bg-opacity-40 rounded-xl p-4 shadow-2xl">
                   <h3 className="text-white font-semibold mb-3 flex items-center justify-center gap-2">
                     <Trophy className="w-5 h-5" />
                     Top Scores
@@ -960,7 +960,7 @@ const SpaceRunner = () => {
             <h2 className="text-3xl font-bold text-gray-900">Leaderboard</h2>
           </div>
           
-          <div className="bg-gray-100 rounded-xl p-6 border-2 border-gray-300 leaderboard-text">
+          <div className="bg-gray-100 rounded-xl p-6 border-2 border-gray-300">
             {loading ? (
               <p className="text-center text-gray-600">Loading...</p>
             ) : leaderboard.length === 0 ? (
