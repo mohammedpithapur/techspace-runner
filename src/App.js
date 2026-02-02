@@ -6,7 +6,9 @@ const ASSETS = {
   floatingMeteoroid: encodeURI(`${process.env.PUBLIC_URL}/assets/Floating Mateoroid 160x160.png`),
   landedMeteoroid: encodeURI(`${process.env.PUBLIC_URL}/assets/Landed Mateoroid 160x160.png`),
   rocket: encodeURI(`${process.env.PUBLIC_URL}/assets/Rocket Animation.gif`),
-  gameOverRaccoon: encodeURI(`${process.env.PUBLIC_URL}/assets/Raccoon GameOver.png`)
+  baseModel: encodeURI(`${process.env.PUBLIC_URL}/assets/Base Model.png`),
+  gameOverRaccoon: encodeURI(`${process.env.PUBLIC_URL}/assets/Raccoon GameOver.png`),
+  logo: `${process.env.PUBLIC_URL}/logo192.png`
 };
 
 // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
@@ -35,6 +37,7 @@ const SpaceRunner = () => {
   const [error, setError] = useState('');
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
+  const [countdown, setCountdown] = useState(null);
   
   const firebaseApp = useRef(null);
   const database = useRef(null);
@@ -203,22 +206,29 @@ const SpaceRunner = () => {
     setLoading(false);
   };
 
-  // Preload assets to improve initial loading
+  // Preload all game assets before gameplay
   const preloadAssets = () => {
     const imagesToLoad = Object.values(ASSETS);
     let loadedCount = 0;
+    const totalAssets = imagesToLoad.length;
     
-    imagesToLoad.forEach(src => {
+    console.log(`Preloading ${totalAssets} game assets...`);
+    
+    imagesToLoad.forEach((src, index) => {
       const img = new Image();
       img.onload = () => {
         loadedCount++;
-        if (loadedCount === imagesToLoad.length) {
+        console.log(`Loaded asset ${loadedCount}/${totalAssets}: ${src}`);
+        if (loadedCount === totalAssets) {
+          console.log('All assets loaded successfully!');
           setAssetsLoaded(true);
         }
       };
-      img.onerror = () => {
+      img.onerror = (e) => {
         loadedCount++;
-        if (loadedCount === imagesToLoad.length) {
+        console.warn(`Failed to load asset ${loadedCount}/${totalAssets}: ${src}`, e);
+        if (loadedCount === totalAssets) {
+          console.log('Asset loading complete (some may have failed)');
           setAssetsLoaded(true);
         }
       };
@@ -353,34 +363,27 @@ const SpaceRunner = () => {
       });
     };
 
-    // Chrome Dino-style obstacle patterns - simpler and more predictable
+    // Meteor spawn patterns with specified probabilities
     const roll = Math.random();
     const avgObstacleSize = (FLOATING_OBSTACLE_SIZE + LANDED_OBSTACLE_SIZE) / 2;
     
-    if (roll < 0.25) {
-      // Double ground - wider spacing
+    if (roll < 0.50) {
+      // Single land meteor - 50%
+      spawnSingle('ground', 0);
+    } else if (roll < 0.70) {
+      // Double land meteor - 20%
       const gap = avgObstacleSize * 1.5;
       spawnSingle('ground', 0);
       spawnSingle('ground', gap);
-    } else if (roll < 0.35) {
-      // Double floating
-      const gap = avgObstacleSize * 1.5;
-      spawnSingle('floating', 0);
-      spawnSingle('floating', gap);
-    } else if (roll < 0.42) {
-      // Triple ground - only at higher speeds
-      if (worldSpeedRef.current > (isMobile ? 700 : 1000)) {
-        const gap = avgObstacleSize * 1.1;
-        spawnSingle('ground', 0);
-        spawnSingle('ground', gap);
-        spawnSingle('ground', gap * 2);
-      } else {
-        spawnSingle('ground', 0);
-      }
+    } else if (roll < 0.90) {
+      // Triple land meteor - 20%
+      const gap = avgObstacleSize * 1.1;
+      spawnSingle('ground', 0);
+      spawnSingle('ground', gap);
+      spawnSingle('ground', gap * 2);
     } else {
-      // Single obstacle - most common like Chrome Dino
-      const type = Math.random() < 0.65 ? 'ground' : 'floating';
-      spawnSingle(type, 0);
+      // Single floating meteor - 10%
+      spawnSingle('floating', 0);
     }
     
     obstacleTimerRef.current = setTimeout(spawnObstacle, nextDelay);
@@ -458,18 +461,32 @@ const SpaceRunner = () => {
     jumpCountRef.current = 0; // Reset jump counter
     groundOffsetRef.current = 0; // Reset ground scroll
     
-    gameActiveRef.current = true;
-    lastFrameTimeRef.current = performance.now();
+    setScreen('game');
+    setCountdown(3);
     
-    // Show instructions and hide after 3 seconds
-    setShowInstructions(true);
-    setTimeout(() => setShowInstructions(false), 3000);
+    // Countdown sequence: 3, 2, 1, GO
+    let count = 3;
+    const countdownInterval = setInterval(() => {
+      count--;
+      if (count > 0) {
+        setCountdown(count);
+      } else if (count === 0) {
+        setCountdown('GO!');
+        setTimeout(() => {
+          setCountdown(null);
+          // Actually start the game
+          gameActiveRef.current = true;
+          lastFrameTimeRef.current = performance.now();
+          setShowInstructions(true);
+          setTimeout(() => setShowInstructions(false), 3000);
+          animationFrameRef.current = requestAnimationFrame(gameLoop);
+          obstacleTimerRef.current = setTimeout(spawnObstacle, 1500);
+        }, 800);
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
     
     forceUpdate({});
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
-    obstacleTimerRef.current = setTimeout(spawnObstacle, 1500);
-    
-    setScreen('game');
   };
 
   const handleRegister = () => {
@@ -717,8 +734,8 @@ const SpaceRunner = () => {
           }}
         >
           <img
-            src={ASSETS.rocket}
-            alt="Rocket"
+            src={countdown !== null ? ASSETS.baseModel : ASSETS.rocket}
+            alt={countdown !== null ? "Base Model" : "Rocket"}
             className="w-full h-full object-contain"
             onError={(e) => console.error('GIF failed to load:', ASSETS.rocket, e)}
           />
@@ -751,7 +768,7 @@ const SpaceRunner = () => {
           );
         })}
 
-        {showInstructions && (
+        {showInstructions && !countdown && (
           <div 
             className="absolute left-1/2 transform -translate-x-1/2 text-center" 
             style={{ 
@@ -768,6 +785,35 @@ const SpaceRunner = () => {
             <p>Tap & Hold: Jump Higher | Quick Tap: Short Hop</p>
           </div>
         )}
+
+        {countdown !== null && (
+          <div 
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ 
+              zIndex: 100,
+              backgroundColor: 'rgba(0,0,0,0.5)'
+            }}
+          >
+            <div 
+              className="text-white font-bold animate-pulse"
+              style={{ 
+                fontSize: countdown === 'GO!' ? '8rem' : '12rem',
+                textShadow: '0 0 30px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.5)',
+                animation: 'scaleIn 0.3s ease-out'
+              }}
+            >
+              {countdown}
+            </div>
+          </div>
+        )}
+
+        <style>{`
+          @keyframes scaleIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+          }
+        `}</style>
       </div>
     );
   }
@@ -855,9 +901,8 @@ const SpaceRunner = () => {
           {/* Go Home button in top left corner */}
           <button
             onClick={() => {
-              setPlayerName('');
-              setPlayerContact('');
               setScreen('landing');
+              loadLeaderboard();
             }}
             className="absolute top-6 left-6 bg-gray-700 bg-opacity-80 hover:bg-gray-800 text-white font-semibold px-6 py-2 rounded-lg shadow-lg transform hover:scale-105 transition"
           >
