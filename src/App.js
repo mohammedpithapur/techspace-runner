@@ -41,12 +41,14 @@ const SpaceRunner = () => {
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [showInstructions, setShowInstructions] = useState(true);
   const [countdown, setCountdown] = useState(null);
+  const [isLandscape, setIsLandscape] = useState(false);
   
   const firebaseApp = useRef(null);
   const database = useRef(null);
   
   // Game state refs
   const gameActiveRef = useRef(false);
+  const isLandscapeRef = useRef(false); // Track landscape mode synchronously
   const playerYRef = useRef(0); // Will be set by getGameDimensions
   const velocityYRef = useRef(0);
   const isJumpingRef = useRef(false);
@@ -120,6 +122,27 @@ const SpaceRunner = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [GROUND_Y]);
+
+  // Monitor orientation changes
+  useEffect(() => {
+    const checkOrientation = () => {
+      const landscape = window.innerWidth > window.innerHeight;
+      isLandscapeRef.current = landscape;
+      setIsLandscape(landscape);
+    };
+    
+    // Check initial orientation
+    checkOrientation();
+    
+    // Listen for orientation changes
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+    
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
+  }, []);
 
   // Load cached player data from localStorage
   useEffect(() => {
@@ -273,6 +296,12 @@ const SpaceRunner = () => {
   const gameLoop = (timestamp) => {
     if (!gameActiveRef.current) return;
     
+    // Skip this frame if in landscape, but keep the loop running
+    if (isLandscapeRef.current) {
+      animationFrameRef.current = requestAnimationFrame(gameLoop);
+      return;
+    }
+    
     const deltaTime = timestamp - lastFrameTimeRef.current;
     lastFrameTimeRef.current = timestamp;
     
@@ -331,6 +360,9 @@ const SpaceRunner = () => {
 
   const handleTouchStart = () => {
     if (!gameActiveRef.current) return;
+    // Check if in landscape mode using ref
+    if (isLandscapeRef.current) return;
+    
     isTouchingRef.current = true;
     // Only allow jump when on ground to prevent cheating
     if (playerYRef.current >= GROUND_Y - 1) {
@@ -348,6 +380,12 @@ const SpaceRunner = () => {
 
   const spawnObstacle = () => {
     if (!gameActiveRef.current) return;
+    // Check if in landscape mode - reschedule for later
+    if (isLandscapeRef.current) {
+      obstacleTimerRef.current = setTimeout(spawnObstacle, 100);
+      return;
+    }
+    
     // Chrome Dino-style predictable spawning with gradual difficulty
     const speedFactor = Math.min(1.5, worldSpeedRef.current / (isMobile ? 400 : 600));
     const baseDelay = 1600 / speedFactor;
@@ -821,6 +859,27 @@ const SpaceRunner = () => {
             100% { transform: scale(1); opacity: 1; }
           }
         `}</style>
+
+        {/* Rotation Warning Overlay */}
+        {isLandscape && (
+          <div 
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ 
+              zIndex: 200,
+              backgroundColor: 'rgba(0,0,0,0.95)'
+            }}
+          >
+            <div className="text-center space-y-6 px-6">
+              <div className="text-white" style={{ fontSize: '4rem' }}>📱</div>
+              <div className="text-white font-bold" style={{ fontSize: '2rem' }}>
+                Rotate to Play
+              </div>
+              <div className="text-gray-300" style={{ fontSize: '1.2rem' }}>
+                Please rotate your device to portrait mode
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -960,6 +1019,27 @@ const SpaceRunner = () => {
             </div>
           </div>
         </div>
+
+        {/* Rotation Warning Overlay for Game Over Screen */}
+        {isLandscape && (
+          <div 
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ 
+              zIndex: 200,
+              backgroundColor: 'rgba(0,0,0,0.95)'
+            }}
+          >
+            <div className="text-center space-y-6 px-6">
+              <div className="text-white" style={{ fontSize: '4rem' }}>📱</div>
+              <div className="text-white font-bold" style={{ fontSize: '2rem' }}>
+                Rotate to Play
+              </div>
+              <div className="text-gray-300" style={{ fontSize: '1.2rem' }}>
+                Please rotate your device to portrait mode
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
